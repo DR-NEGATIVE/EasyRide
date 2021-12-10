@@ -1,7 +1,11 @@
+import 'package:easyride/constant/Navigation.dart';
 import 'package:easyride/constant/constant.dart';
+import 'package:easyride/views/newAccountPage.dart';
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   // LoginPage({Key? key}) : super(key: key);
@@ -13,6 +17,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _dropdownCountry = '+91';
   TextEditingController _phoneNoController = new TextEditingController();
+  String otp = "";
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
@@ -56,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: screenHeight / 3.2,
                 ),
                 Container(
-                  height: screenHeight / 2,
+                  height: screenHeight / 2.1,
                   width: screenWidth,
                   child: Image(
                     image: AssetImage('assets/images/tuk-tuk.png'),
@@ -94,11 +104,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Container base(double screenWidth, double screenHeight) {
     return Container(
-      // color: Colors.amber,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
         children: [
           Container(
             margin: EdgeInsets.all(12),
@@ -137,10 +144,6 @@ class _LoginPageState extends State<LoginPage> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    // padding: EdgeInsets.only(
-                    //   top: 10,
-                    //   bottom: 4,
-                    // ),
                     child: TextField(
                       keyboardType: TextInputType.number,
                       controller: _phoneNoController,
@@ -163,18 +166,14 @@ class _LoginPageState extends State<LoginPage> {
             child: ElevatedButton(
               onPressed: () {
                 FocusManager.instance.primaryFocus?.unfocus();
+                if (_phoneNoController.text.length != 10) {
+                  Fluttertoast.showToast(msg: 'Invalid Mobile Number');
+                  return;
+                }
                 showDialog(
                     context: context,
                     builder: (BuildContext context) =>
                         OtpVerifactionAlert(context));
-                // if (_controller.text.length != 10) {
-                //   print('Invalid No');
-                //   Fluttertoast.showToast(msg: 'invalid PhoneNo');
-
-                //   return;
-                // }
-                // DataBase().loginUser(
-                //     _dropdownCountry + _controller.text, context);
               },
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(EdgeInsets.only(
@@ -197,6 +196,128 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
+    );
+  }
+
+  OtpVerifactionAlert(BuildContext context) {
+    double _height = MediaQuery.of(context).size.height;
+    double _width = MediaQuery.of(context).size.width;
+    // String otp = "";
+    return Dialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      insetPadding: EdgeInsets.all(_width * 0.04),
+      child: Container(
+          height: _height / 1.9,
+          width: _width,
+          padding: EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Container(
+                height: _height / 8,
+                child: Image(
+                  image: AssetImage('assets/images/password.png'),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(12),
+                child: Text(
+                  'OTP Verification',
+                  style: upperStyleText,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(8),
+                height: 28,
+                child: Text(
+                  'Code is sent to ${_dropdownCountry + _phoneNoController.text}',
+                  style: lowerStyleText,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              PinCodeTextField(
+                length: 6,
+                appContext: context,
+                keyboardType: TextInputType.number,
+                pinTheme: PinTheme(
+                  shape: PinCodeFieldShape.box,
+                  borderRadius: BorderRadius.circular(3),
+                  inactiveFillColor: Colors.amber,
+                  selectedFillColor: Colors.amber,
+                  activeColor: Colors.amber,
+                  inactiveColor: Colors.white,
+                  selectedColor: Colors.amber,
+                  activeFillColor: Colors.white,
+                ),
+                enableActiveFill: true,
+                onChanged: (String value) {
+                  setState(() {
+                    otp = value;
+                  });
+                },
+              ),
+              Container(
+                  margin: EdgeInsets.all(8),
+                  child: RichText(
+                      text: TextSpan(
+                          text: 'Didn’t receive the code? ',
+                          style: TextStyle(
+                              fontFamily: 'Roboto',
+                              letterSpacing: 1.5,
+                              fontSize: 14,
+                              color: Colors.black26,
+                              fontWeight: FontWeight.w400),
+                          children: [
+                        TextSpan(
+                            text: 'Request Again',
+                            style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 2.0,
+                              fontWeight: FontWeight.bold,
+                            ))
+                      ]))),
+              ButtonTheme(
+                child: ElevatedButton(
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    print(otp);
+                    if (otp.length != 6) {
+                      Fluttertoast.showToast(msg: 'Invalid OTP');
+                      return;
+                    }
+                    print('done');
+                    Navigator.push(
+                        context, SlideRightRoute(page: newUserDetailsForm()));
+                    // if (_controller.text.length != 10) {
+                    //   print('Invalid No');
+                    //   Fluttertoast.showToast(msg: 'invalid PhoneNo');
+
+                    //   return;
+                    // }
+                    // DataBase().loginUser(
+                    //     _dropdownCountry + _controller.text, context);
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(EdgeInsets.only(
+                      top: 0,
+                    )),
+                    minimumSize: MaterialStateProperty.all(
+                        Size(_width * 0.84, _height * 0.08)),
+                    backgroundColor: MaterialStateProperty.all(Colors.amber),
+                  ),
+                  child: Text(
+                    'Verify & Proceed',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'QuickSand',
+                        letterSpacing: 1),
+                  ),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }

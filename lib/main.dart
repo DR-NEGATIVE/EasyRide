@@ -1,4 +1,6 @@
 import 'package:easyride/Auth/loginPage.dart';
+import 'package:easyride/views/homaPageForAutoDriver.dart';
+import 'package:easyride/views/homePageForUser.dart';
 import 'package:easyride/views/newAccountPage.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
           // is not restarted.
           primarySwatch: Colors.amber,
           fontFamily: 'QuickSand'),
-      home: newUserDetailsForm(),
+      home: LoginPage(),
     );
   }
 }

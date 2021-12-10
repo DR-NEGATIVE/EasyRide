@@ -1,3 +1,5 @@
+import 'package:easyride/constant/Navigation.dart';
+import 'package:easyride/constant/tempNav.dart';
 import 'package:flutter/material.dart';
 
 class newUserDetailsForm extends StatefulWidget {
@@ -11,6 +13,8 @@ class _newUserDetailsFormState extends State<newUserDetailsForm> {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset: false,
       body: Container(
         width: screenWidth,
         height: screenHeight,
@@ -40,8 +44,6 @@ class _newUserDetailsFormState extends State<newUserDetailsForm> {
                         Icons.edit, 'John Doe'),
                     EntityBlock(screenHeight, screenWidth, 'Email', Icons.email,
                         'Negative@email.com'),
-                    EntityBlock(screenHeight, screenWidth, 'Occupation',
-                        Icons.work, 'Software Developer'),
                     EntityBlock(screenHeight, screenWidth, 'Adress',
                         Icons.place, '3rd House from Railway'),
                     EntityBlock(screenHeight, screenWidth, 'Pincode',
@@ -69,6 +71,7 @@ class _newUserDetailsFormState extends State<newUserDetailsForm> {
                 child: ElevatedButton(
                   onPressed: () {
                     FocusManager.instance.primaryFocus?.unfocus();
+                    Navigator.push(context, SlideRightRoute(page: tempNav()));
                   },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all(EdgeInsets.only(
@@ -112,7 +115,7 @@ class _newUserDetailsFormState extends State<newUserDetailsForm> {
               right: screenWidth * 0.08,
             )),
         Container(
-            height: screenHeight * 0.08,
+            padding: EdgeInsets.all(2),
             width: double.infinity,
             child: TextFormField(
               style: TextStyle(fontWeight: FontWeight.w500),
